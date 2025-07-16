@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YEBEKHE Interactive Particle Logo</title>
+    <title>YEBEKHE Bio Gate</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@600&display=swap" rel="stylesheet">
@@ -71,6 +71,42 @@
         .enter-button:hover .button-logo {
             transform: scale(1.1);
         }
+
+        /* Updated Hint Text Style (Even Fainter) */
+        .hint-text {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Josefin Sans', sans-serif;
+            font-size: 14px;
+            z-index: 11;
+            white-space: nowrap; /* Ensures the text stays on a single line */
+            
+            /* Even fainter gradient text effect */
+            background: linear-gradient(90deg, 
+                rgba(255, 255, 255, 0.02), 
+                rgba(255, 255, 255, 0.1), 
+                rgba(255, 255, 255, 0.02)
+            );
+            background-size: 250% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            
+            /* Animation */
+            animation: sweep-animation 8s linear infinite;
+        }
+
+        @keyframes sweep-animation {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -80,8 +116,14 @@
         <img src="" alt="Custom Logo" class="button-logo" id="buttonLogoImage">
     </a>
 
+    <p class="hint-text">> Dev tip: > "dblclick" isn’t deprecated — it’s underrated ! </p>
 
     <script>
+        /*
+            Main Particle Logic
+            Developed by ☬SHΞN™
+        */
+
         const LOGO_URL = 'https://raw.githubusercontent.com/Shervinuri/YEBEKHE-/refs/heads/main/Picsart_25-07-17_01-38-54-658.png';
 
         const canvas = document.getElementById('particleCanvas');
@@ -95,18 +137,16 @@
         let isToggling = false;
         let inactivityTimer = null;
         let clickabilityTimer = null;
-        let isPointerDown = false; // --- وضعیت جدید برای کنترل تعامل ---
+        let isPointerDown = false;
 
         const MAX_PARTICLES = 10000;
         const mouse = { x: null, y: null, radius: 150 };
 
-        // --- Event Listeners ---
         const setMousePosition = (e) => {
             mouse.x = e.clientX || (e.touches && e.touches[0].clientX);
             mouse.y = e.clientY || (e.touches && e.touches[0].clientY);
         };
         
-        // --- Interaction Logic ---
         canvas.addEventListener('mousedown', () => { isPointerDown = true; });
         canvas.addEventListener('touchstart', () => { isPointerDown = true; }, { passive: true });
         
@@ -118,7 +158,6 @@
         canvas.addEventListener('mousemove', setMousePosition);
         canvas.addEventListener('touchmove', setMousePosition, { passive: true });
 
-        // --- Double Click / Double Tap Logic ---
         let clickCount = 0;
         let clickTimer = null;
         canvas.addEventListener('click', () => {
@@ -153,7 +192,6 @@
                 ctx.fillRect(this.x, this.y, this.size, this.size);
             }
             update() {
-                // --- پراکندگی فقط زمانی که کلیک/لمس نگه داشته شده ---
                 if (isPointerDown) {
                     const dx = mouse.x - this.x; const dy = mouse.y - this.y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -169,7 +207,6 @@
                      this.isScattered = false;
                 }
                 
-                // بازگشت به حالت اولیه
                 if (!this.isScattered) {
                     if (this.x !== this.baseX) this.x -= (this.x - this.baseX) / 15;
                     if (this.y !== this.baseY) this.y -= (this.y - this.baseY) / 15;
@@ -243,6 +280,7 @@
                 }
             }
 
+            // Shuffle the potential particles to take a random sample
             for (let i = potentialParticles.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [potentialParticles[i], potentialParticles[j]] = [potentialParticles[j], potentialParticles[i]];
